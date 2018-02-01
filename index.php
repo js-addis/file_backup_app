@@ -1,35 +1,54 @@
 <!DOCTYPE html>
 <?php
 
+// Jacob Addis - file_backup web application.
+// Created for project in Comp Systems Research Seminar.
+// Takes a file as input from an HTML file selector and sends it to /uploads folder.
+// Creates Record in mySQL database and displays all Database enties in GUI table format.
+// Course Instructor: Christopher Diaz phd.
+// Course ID: SCS 400 01.
+
 require_once('database.php');
 $db = db_connect();
 
 $upload_directory = 'uploads/';
 
 if(isset($_POST["submit"])){
-                                                    // SQL : file_backup
-    $file_name = $_FILES["upload"]["name"];         // CREATE TABLE file_uploads (
-    $file_size = $_FILES["upload"]["size"];         // id INT(11) NOT NULL AUTO_INCREMENT,
-    $tempname = $_FILES['upload']['tmp_name'];      // Filename VARCHAR(200),
-                                                    // Size INT(15),
-    $sql = "INSERT INTO file_uploads ";             // PRIMARY KEY (id)
-    $sql .= "(Filename, Size) ";                    // );
-    $sql .= "VALUES (";
-    $sql .= "'" . $file_name . "',";
-    $sql .= "'" . $file_size . "'";
-    $sql .= ")";
 
+    $file_name = $_FILES["upload"]["name"];
+    $file_size = $_FILES["upload"]["size"];
+    $tempname = $_FILES['upload']['tmp_name'];
+
+    $sql = "INSERT INTO file_uploads ";             // CREATE TABLE file_uploads (
+    $sql .= "(Filename, Size) ";                    // id INT(11) NOT NULL AUTO_INCREMENT,
+    $sql .= "VALUES (";                             // Filename VARCHAR(200),
+    $sql .= "'" . $file_name . "',";                // Size INT(20),
+    $sql .= "'" . $file_size . "'";                 // PRIMARY KEY (id),
+    $sql .= ")";                                    // UNIQUE (Filename) -- Using SQL to handle duplicates.
+                                                    // );
     $result = mysqli_query($db, $sql);
 
+    if($result) {
+        echo "Database Query Sucessful";
+    } else {
+        echo "Duplicate Entry Detected. " . "  ";
+    }
+
+    if (move_uploaded_file($tempname, "uploads/" . $file_name)) {
+        echo "Upload Complete!";
+    } else {
+        echo "Upload Failed!";
+    }
 }
-function find_all_uploads() {                       //connects to DB and performs query.
-                                                    //Finds and returns all rows.
-    global $db;
+function find_all_uploads() {                       // connects to DB and performs query.                                               //Finds and returns all rows.
+    global $db;                                     // finds  and all rows in file_uploads table.
     $sql = "SELECT * FROM file_uploads ";
-    $sql .= "ORDER BY id ASC";
+    $sql .= "ORDER BY id DESC";
     $result = mysqli_query($db, $sql);
     return $result;
 }
+
+$uploads_array = find_all_uploads();
 
 ?>
 <html>
@@ -54,16 +73,23 @@ function find_all_uploads() {                       //connects to DB and perform
             <div id="container">
                 <table class="list">
                     <tr>
-                    <th>ID</th>
-                    <th>Filename</th>
-                    <th>Size</th>
-                    <th></th>
+                        <th>ID</th>
+                        <th>Filename</th>
+                        <th>Size</th>
                     </tr>
 
-                    <?php while() ?>
+                    <?php while($file = mysqli_fetch_assoc($uploads_array)) { ?>
+                        <tr>
+                            <td> <?php echo $file['id']; ?> </td>
+                            <td> <?php echo $file['Filename']; ?> </td>
+                            <td> <?php echo $file['Size'] . " bytes"; ?> </td>
+                        </tr>
+                    <?php } ?>
+
                 </table>
+                <?php db_disconnect($db); ?>
             </div>
-            <p style="margin-left: 27px"><br/><span style="color: greenyellow;text-shadow: 1px 1px 1px black">Rules: </span></br/>1. The file uploaded must have an extension.<br/>2. The file size cannot exceed 50 mb.</p>
+            <p style="margin-left: 27px"><br/><span style="color: greenyellow;text-shadow: 1px 1px 1px black">Rules: </span></br/>1. The file uploaded must have an extension.<br/>2. The file size cannot exceed 50 mb.<br/>3. The file must be unique.</p>
         </div>
     </body>
 </html>
