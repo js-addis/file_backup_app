@@ -76,6 +76,7 @@ $uploads_array = find_all_uploads();
                         <th>ID</th>
                         <th>Filename</th>
                         <th>Size</th>
+                        <th>Download</th>
                     </tr>
 
                     <?php while($file = mysqli_fetch_assoc($uploads_array)) { ?>
@@ -83,6 +84,7 @@ $uploads_array = find_all_uploads();
                             <td> <?php echo $file['id']; ?> </td>
                             <td> <?php echo $file['Filename']; ?> </td>
                             <td> <?php echo $file['Size'] . " bytes"; ?> </td>
+                            <td> <a href="<?php echo "uploads/" . $file['Filename'] ?>" download> Download</a> </td>
                         </tr>
                     <?php } ?>
 
