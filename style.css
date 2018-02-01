@@ -1,0 +1,58 @@
+#outer {
+    width: 500px;
+    height: 600px;
+    margin: auto;
+    border: 1px solid black;
+    border-radius: 5px;
+    padding: 5px;
+}
+#container {
+    width: 92%;
+    height: 300px;
+    margin: auto;
+    border: 1px solid black;
+    border-radius: 4px;
+}
+#form {
+    height: 50px;
+    width: 100%;
+}
+#submit {
+    width: 100px;
+    height: 20px;
+    background-color: greenyellow;
+    border: 1px solid black;
+    border-radius: 3px;
+}
+#submit:hover {
+    border: 1px solid cornflowerblue;
+}
+#upload {
+    width: 390px;
+    background-color: lightgray;
+    border-radius: 3px;
+    border: 1px solid transparent;
+}
+#upload:hover {
+    border: 1px solid cornflowerblue;
+}
+
+table {
+  border-collapse: collapse;
+  vertical-align: top;
+}
+
+table.list {
+  width: 100%;
+}
+
+table.list tr td {
+  border: 1px solid #999999;
+}
+
+table.list tr th {
+  border: 1px solid #0055DD;
+  background: #0055DD;
+  color: white;
+  text-align: left;
+}
