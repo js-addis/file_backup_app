@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <?php
 
+require_once('database.php');
+$db = db_connect();
+
 $upload_directory = 'uploads/';
 
 if(isset($_POST["submit"])){
@@ -9,33 +12,21 @@ if(isset($_POST["submit"])){
     $file_size = $_FILES["upload"]["size"];
     $tempname = $_FILES['upload']['tmp_name'];
 
-    if(strpos(file_get_contents("log.html"), $file_name) == false) {
+    $sql = "INSERT INTO file_backup ";
+    $sql .= "(Filename, Size) ";
+    $sql .= "VALUES (";
+    $sql .= "'" . $file_name . "',";
+    $sql .= "'" . $file_size . "'";
+    $sql .= ")";
 
-        $open = fopen("log.html", 'a');
-        fwrite($open, "<div style='margin: 1px'><span style='color: cornflowerblue'>" . "Filename: </span>" . $file_name . " " . "<span style='color: cornflowerblue'>Size: </span>" . $file_size . "bytes" . "</div>\n");
-        fclose($open);
+    $result = mysqli_query($db, $sql);
 
-        if (move_uploaded_file($tempname, "uploads/" . $file_name)) {
-            echo "Sucessful!";
-        } else if (file_exists($file_name)){
-            echo "Already exists in backup";
-        }
-    }
 }
 
 ?>
 <html>
     <script>
-        function load() {
-            $.ajax({
-                url: "log.html",
-                cache: "false",
-                success: function(html) {
-                    $("#container").html(html);
-                }
-            })
-        }
-        setInterval(load, 100);
+
     </script>
     <head>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
